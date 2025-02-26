@@ -15,7 +15,7 @@
         }
 
         .ticket { 
-            width: 250px; 
+            width: 270px; 
             margin: auto; 
             border: 2px solid #333; 
             background: white;
@@ -41,8 +41,30 @@
             margin-top: 5px;
         }
 
-        .productos ul {
-            padding-left: 15px;
+        .producto-card {
+            background: #f9f9f9;
+            padding: 5px;
+            border-radius: 5px;
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 4px solid #007bff;
+        }
+
+        .producto-cantidad {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .producto-nombre {
+            flex-grow: 1;
+            margin-left: 8px;
+        }
+
+        .producto-precio {
+            font-weight: bold;
+            color: #28a745;
         }
 
         .totals {
@@ -79,7 +101,7 @@
 
         <div class="productos">
             <strong>🛒 Productos:</strong>
-            <ul id="productos-list"></ul>
+            <div id="productos-list"></div>
         </div>
 
         <div class="totals">
@@ -106,8 +128,13 @@
 
         const productosList = document.getElementById("productos-list");
         productos.forEach((producto, index) => {
-            const item = document.createElement("li");
-            item.textContent = `${cantidades[index]} x ${producto} - S/ ${precios[index]}`;
+            const item = document.createElement("div");
+            item.className = "producto-card";
+            item.innerHTML = `
+                <span class="producto-cantidad">${cantidades[index]}x</span>
+                <span class="producto-nombre">${producto}</span>
+                <span class="producto-precio">S/ ${precios[index]}</span>
+            `;
             productosList.appendChild(item);
         });
     </script>
