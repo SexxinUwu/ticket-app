@@ -1,94 +1,66 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket de Salida</title>
-    <style>
-        body {
-            font-family: 'Oswald', sans-serif;
-            font-size: 11px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-        }
-        .ticket-container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 400px;
-            text-align: left;
-        }
-        .header {
-            font-size: 13px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        .info {
-            margin-bottom: 10px;
-        }
-        .info span {
-            font-weight: bold;
-        }
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        .table th, .table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        .table th {
-            background-color: #333;
-            color: white;
-            font-size: 13px;
-        }
-        .total {
-            font-size: 13px;
-            font-weight: bold;
-            margin-top: 15px;
-        }
-        .print-btn {
-            display: block;
-            width: 100%;
-            text-align: center;
-            background: #007bff;
-            color: white;
-            padding: 8px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-    </style>
-</head>
-<body>
-    <div class="ticket-container">
-        <div class="header">🧾 Ticket de Salida</div>
-        <div class="info">📅 <span>Fecha:</span> ____</div>
-        <div class="info">👤 <span>Cliente:</span> ____</div>
-        <div class="info">🚗 <span>Placa:</span> ____</div>
-        <div class="info">📦 <span>Productos:</span></div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Cantidad</th>
-                    <th>Ítem</th>
-                    <th>Precio</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Aquí se agregarán los productos dinámicamente -->
-            </tbody>
-        </table>
-        <div class="total">💰 <span>Total:</span> S/ ____</div>
-        <button class="print-btn">🖨️ Imprimir</button>
+import React, { useState, useEffect } from "react";
+
+const TicketSalida = () => {
+  const [productos, setProductos] = useState([]);
+
+  useEffect(() => {
+    // Obtener datos de la URL generada en AppSheet
+    const urlParams = new URLSearchParams(window.location.search);
+    const data = urlParams.get("productos");
+    if (data) {
+      try {
+        const parsedData = JSON.parse(decodeURIComponent(data));
+        setProductos(parsedData);
+      } catch (error) {
+        console.error("Error al parsear productos:", error);
+      }
+    }
+  }, []);
+
+  const total = productos.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+
+  return (
+    <div className="max-w-lg mx-auto p-4 border rounded-lg shadow-lg bg-white">
+      <h2 className="text-lg font-bold flex items-center">
+        📄 Ticket de Salida
+      </h2>
+      <div className="mt-2">
+        <p>📅 <strong>Fecha:</strong> ____</p>
+        <p>👤 <strong>Cliente:</strong> ____</p>
+        <p>🚗 <strong>Placa:</strong> ____</p>
+      </div>
+      <h3 className="mt-4 font-bold">
+        🌟 Productos:
+      </h3>
+      <table className="w-full border mt-2">
+        <thead>
+          <tr className="bg-gray-800 text-white">
+            <th className="p-2">Cantidad</th>
+            <th className="p-2">Ítem</th>
+            <th className="p-2">Precio</th>
+          </tr>
+        </thead>
+        <tbody>
+          {productos.map((item, index) => (
+            <tr key={index} className="border">
+              <td className="p-2 text-center">{item.cantidad}</td>
+              <td className="p-2">{item.nombre}</td>
+              <td className="p-2 text-right">S/ {item.precio.toFixed(2)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="mt-4 font-bold">
+        💰 Total: S/ {total.toFixed(2) || "____"}
+      </p>
+      <button
+        onClick={() => window.print()}
+        className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+      >
+        🖼️ Imprimir
+      </button>
     </div>
-</body>
-</html>
+  );
+};
+
+export default TicketSalida;
